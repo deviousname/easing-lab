@@ -14,6 +14,12 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Easing Gauntlet, a playable Pygame example with eased lane changes, falling motion,
   spawn effects, safety pulses, score feedback, particles, and background animation.
 - A deterministic headless smoke test for the playable example.
+- A six-second gameplay animation in the README, rendered directly from Easing Gauntlet.
+
+### Fixed
+
+- The game-feel drawer now follows the selected easing, matching its companion motion
+  indicator and reflecting live curve edits.
 
 ## 0.1.0 - 2026-08-17
 
