@@ -17,8 +17,7 @@ except ModuleNotFoundError as exc:
     if exc.name != "pygame":
         raise
     raise SystemExit(
-        "The Easing Lab designer needs Pygame. Install it with:\n"
-        '  pip install "pygame-easing-lab[app]"'
+        'The Easing Lab designer needs Pygame. Install it with:\n  pip install "easing-lab[app]"'
     ) from None
 
 from . import __version__

@@ -31,7 +31,7 @@ jobs:
           python -c "import subprocess;
           result = subprocess.run(['easing-lab'], capture_output=True, text=True);
           assert result.returncode != 0;
-          assert 'pip install \"pygame-easing-lab[app]\"' in result.stderr, result.stderr"
+          assert 'pip install \"easing-lab[app]\"' in result.stderr, result.stderr"
 
       - name: Install test runner
         run: python -m pip install "pytest>=8.3"

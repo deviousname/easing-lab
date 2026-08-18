@@ -2,23 +2,17 @@
 
 [![CI](https://github.com/deviousname/easing-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/deviousname/easing-lab/actions/workflows/ci.yml)
 [![Python 3.10–3.13](https://img.shields.io/badge/python-3.10%E2%80%933.13-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
-[![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/deviousname/easing-lab/blob/main/LICENSE)
 
 Easing Lab is a small Python easing library with a Pygame curve designer for seeing,
 shaping, and exporting motion.
 
-![Animated Easing Lab designer showing nine curves, a curve editor, and motion examples](docs/easing-lab.gif)
+![Animated Easing Lab designer showing nine curves, a curve editor, and motion examples](https://raw.githubusercontent.com/deviousname/easing-lab/main/docs/easing-lab.gif)
 
 *The designer compares nine starting curves and lets you reshape eight of them.*
 
-## Try it from source
-
-Easing Lab is not on PyPI yet. Install the current review build from a clone:
-
 ```bash
-git clone https://github.com/deviousname/easing-lab.git
-cd easing-lab
-python -m pip install -e .
+pip install easing-lab
 ```
 
 Here is a complete animation using only the standard library and Easing Lab:
@@ -40,21 +34,17 @@ turtle.done()
 Easing remaps time: instead of moving at one constant speed, an object can start gently,
 land with weight, overshoot, bounce, or settle like a spring.
 
-After the first PyPI release, the base-library install will be
-`pip install pygame-easing-lab`.
-
 ## Launch the designer
 
-From the same clone, install the optional Pygame app and run it:
+Install the optional Pygame app and run it:
 
 ```bash
-python -m pip install -e ".[app]"
+pip install "easing-lab[app]"
 easing-lab
 ```
 
 `python -m easing_lab` opens the same designer. Use `easing-lab --help` for window size,
-startup file, screenshot, and version options. After publication, the app install becomes
-`pip install "pygame-easing-lab[app]"`.
+startup file, screenshot, and version options.
 
 ## The nine designer curves
 
@@ -146,8 +136,8 @@ ease = load_easing("my_jump.json")
 height = ease(0.45)
 ```
 
-See [the versioned JSON format](docs/curve-format.md) and
-[the complete Pygame example](examples/pygame_motion.py).
+See [the versioned JSON format](https://github.com/deviousname/easing-lab/blob/main/docs/curve-format.md)
+and [the complete Pygame example](https://github.com/deviousname/easing-lab/blob/main/examples/pygame_motion.py).
 
 ## Limitations
 
@@ -171,9 +161,9 @@ python -m build
 ```
 
 The GIF can be reproduced with `python tools/render_readme_gif.py`. Read
-[CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Exact test conditions,
+[CONTRIBUTING.md](https://github.com/deviousname/easing-lab/blob/main/CONTRIBUTING.md) before opening a pull request. Exact test conditions,
 artifact checks, dependency boundaries, and provenance are recorded in
-[docs/verification.md](docs/verification.md).
+[docs/verification.md](https://github.com/deviousname/easing-lab/blob/main/docs/verification.md).
 
 ## Credits and license
 
@@ -181,5 +171,5 @@ The Back, Bounce, and Elastic families descend from
 [Robert Penner's easing equations](https://robertpenner.com/easing/). The curve names and
 visual comparisons follow the conventions collected by [easings.net](https://easings.net/).
 
-Easing Lab's source is available under the [MIT License](LICENSE). Pygame is an optional,
+Easing Lab's source is available under the [MIT License](https://github.com/deviousname/easing-lab/blob/main/LICENSE). Pygame is an optional,
 separately licensed dependency used by the designer and Pygame example.
