@@ -95,6 +95,11 @@ python examples/easing_gauntlet.py
 Use A/D or the arrow keys to move, Space to pulse, P to pause, and R to restart. Install
 the `app` extra first if Pygame is not already available.
 
+![Easing Gauntlet showing labeled curves, lane movement, hazards, scoring, and a safety pulse](https://raw.githubusercontent.com/deviousname/easing-lab/main/docs/easing-gauntlet.gif)
+
+*Every falling piece names its motion curve while the sidebar identifies the easings used
+for player movement and visual feedback.*
+
 ## Use the library
 
 The math library does not import Pygame or open a window. Inputs are normalized to `0..1`,

@@ -49,6 +49,7 @@ Source = "https://github.com/deviousname/easing-lab"
 exclude = [
   "docs/easing-lab.gif",
   "docs/easing-lab.png",
+  "docs/easing-gauntlet.gif",
   ".github",
   ".pytest-tmp",
   "HOUSEKEEPING-*.md",

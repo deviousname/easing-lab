@@ -496,12 +496,14 @@ class EasingLabApp:
         self._rounded_panel(self.screen, rect, PANEL, 18, (49, 55, 68))
         self._text("Game-feel doodads", (rect.x + 18, rect.y + 12), TEXT, self.font_big)
 
+        preset = self.selected_preset
+        eased_t = self.easing_value(preset, t)
         row_y = rect.y + 49
-        self._text("UI drawer · sine", (rect.x + 18, row_y), MUTED, self.font_tiny)
+        self._text(f"UI drawer · {preset.name}", (rect.x + 18, row_y), MUTED, self.font_tiny)
         background = pygame.Rect(rect.x + 18, row_y + 18, rect.width - 36, 34)
         pygame.draw.rect(self.screen, PANEL_2, background, border_radius=8)
         drawer_width = min(112, background.width // 3)
-        drawer_x = background.x + int((background.width - drawer_width) * PRESETS["sine_in_out"](t))
+        drawer_x = background.x + int((background.width - drawer_width) * eased_t)
         pygame.draw.rect(
             self.screen,
             ACCENT,
@@ -512,13 +514,12 @@ class EasingLabApp:
             "MENU", (drawer_x + max(8, drawer_width // 3), background.y + 8), BG, self.font_tiny
         )
 
-        preset = self.selected_preset
         color = PRESET_COLORS[preset.key]
         line_y = rect.bottom - 29
         line_x0 = rect.x + 30
         line_x1 = rect.right - 30
         pygame.draw.line(self.screen, GRID, (line_x0, line_y), (line_x1, line_y), 3)
-        object_x = line_x0 + int((line_x1 - line_x0) * self.easing_value(preset, t))
+        object_x = line_x0 + int((line_x1 - line_x0) * eased_t)
         pygame.draw.circle(self.screen, color, (object_x, line_y), 10)
         pygame.draw.circle(self.screen, WHITE, (object_x, line_y), 10, 2)
         self._text(preset.name, (rect.x + 18, line_y - 24), color, self.font_tiny)

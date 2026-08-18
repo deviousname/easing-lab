@@ -55,8 +55,8 @@ This document keeps the engineering evidence behind the public README.
 - **Observed:** `docs/easing-lab.gif` is a 1200×800, 168-frame animation at 20 frames per
   second. Its 8.4-second cycle has no duplicate endpoint and uses a fixed 128-color palette.
 - **Observed:** the renderer verifies the loop boundary, timing metadata, frame count, and
-  every optimized frame after decoding. The checked artifact is 2,653,868 bytes.
-- **Observed:** the PNG preview and animated GIF contain only graphics rendered by Easing Lab
+  every optimized frame after decoding. The refreshed artifact is 2,598,071 bytes.
+- **Observed:** the PNG preview and animated GIFs contain only graphics rendered by Easing Lab
   itself; the repository contains no downloaded font, sound, art, or other media asset.
 
 ## Provenance and credits
@@ -103,14 +103,17 @@ checks used Pygame 2.6.1, the minimum version supported by the `app` extra.
   play area.
 - **Observed:** a separate long deterministic run reached the game-over state and rendered
   its animated restart panel successfully.
+- **Observed:** the README gameplay GIF is a deterministic 770x504, 120-frame capture at 20
+  frames per second. Its six-second loop is 483,512 bytes and was encoded from the running
+  example by a local-only capture script that is not part of the repository.
 - **Observed:** the automated run exercises lane movement and the pulse input path. A visible
   desktop session with live keyboard input was not part of this verification pass.
 
 ### Full project and distributions
 
-- **Observed:** `ruff format --check .` reported 18 files already formatted, and
+- **Observed:** `ruff format --check .` reported 15 files already formatted, and
   `ruff check .` passed.
-- **Observed:** the full suite reported `107 passed in 1.61s`. This includes the new
+- **Observed:** the full suite reported `107 passed in 1.72s`. This includes the new
   deterministic headless game smoke test.
 - **Observed:** `uv build` produced `easing_lab-0.2.0.tar.gz` and
   `easing_lab-0.2.0-py3-none-any.whl`; both passed `twine check`.
