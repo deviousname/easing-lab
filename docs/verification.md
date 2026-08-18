@@ -78,9 +78,12 @@ This document keeps the engineering evidence behind the public README.
   Python 3.13 on Ubuntu.
 - **Inferred:** other SDL-supported desktop environments may work, but are not claimed until
   exercised by CI or a reported live test.
-- **Observed (2026-08-17, America/Los_Angeles):** PyPI's official JSON endpoint for
-  `pygame-easing-lab` returned HTTP 404. No project using that normalized name was registered
-  at that moment; this is an availability check, not a reservation.
+- **Observed (2026-08-17 19:26 PDT):** PyPI's official JSON and Simple endpoints for
+  `pygame-easing-lab` both returned HTTP 404, and `pip index versions pygame-easing-lab`
+  reported `No matching distribution found`. The human project URL returned PyPI's generic
+  `Client Challenge` page and provided no additional project evidence. No published project
+  or release using that normalized name was visible at that moment; this is a registry check,
+  not a reservation.
 - **Derived:** [PyPI's project-name guidance](https://pypi.org/help/#project-name) says a
   name can still be rejected when it is too similar to another project, prohibited, or
   registered without a release. No registration or upload was attempted, so final acceptance
@@ -123,7 +126,7 @@ All checks in this section ran on Windows 11 build 26200 with CPython 3.13.14.
 
 - **Observed:** `ruff format --check .` reported 13 files already formatted.
 - **Observed:** `ruff check .` reported all checks passed.
-- **Observed:** the final full suite reported `106 passed in 0.43s`.
+- **Observed:** the final full suite reported `106 passed in 0.45s`.
 - **Observed:** two preliminary final-suite commands did not complete: one crossed Windows
   ownership contexts and hit the same `.pytest-tmp` permission conflict; the next supplied
   an absolute temporary path without first creating its parent. Neither reported a failed

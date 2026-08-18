@@ -11,16 +11,20 @@ shaping, and exporting motion.
 
 *The designer compares nine starting curves and lets you reshape eight of them.*
 
-```bash
-pip install pygame-easing-lab
-```
+## Try it from source
 
-Easing Lab is not on PyPI yet. That is the planned install command after the first release;
-until then, use the [development setup](#development) below.
+Easing Lab is not on PyPI yet. Install the current review build from a clone:
+
+```bash
+git clone https://github.com/deviousname/easing-lab.git
+cd easing-lab
+python -m pip install -e .
+```
 
 Here is a complete animation using only the standard library and Easing Lab:
 
-```text
+<!-- fmt: off -->
+```python
 import turtle
 from easing_lab import interpolate, ping_pong
 dot = turtle.Turtle("circle")
@@ -31,21 +35,26 @@ def animate(frame=0):
 animate()
 turtle.done()
 ```
+<!-- fmt: on -->
 
 Easing remaps time: instead of moving at one constant speed, an object can start gently,
 land with weight, overshoot, bounce, or settle like a spring.
 
+After the first PyPI release, the base-library install will be
+`pip install pygame-easing-lab`.
+
 ## Launch the designer
 
-Install the optional Pygame app and run it:
+From the same clone, install the optional Pygame app and run it:
 
 ```bash
-pip install "pygame-easing-lab[app]"
+python -m pip install -e ".[app]"
 easing-lab
 ```
 
 `python -m easing_lab` opens the same designer. Use `easing-lab --help` for window size,
-startup file, screenshot, and version options.
+startup file, screenshot, and version options. After publication, the app install becomes
+`pip install "pygame-easing-lab[app]"`.
 
 ## The nine designer curves
 
