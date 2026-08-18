@@ -7,6 +7,10 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Deterministic, color-preserving README GIF renderer and a current 8.4-second app animation.
+
 ## 0.1.0 - 2026-08-17
 
 ### Added

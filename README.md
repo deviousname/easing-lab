@@ -8,7 +8,12 @@ An interactive Pygame easing playground and a small, side-effect-free Python lib
 Compare motion curves, reshape them by dragging control points, export portable JSON, or
 call the same easings directly from a game.
 
-![Easing Lab designer showing nine curves, a curve editor, and motion examples](docs/easing-lab.png)
+![Animated Easing Lab designer showing nine curves, a curve editor, and motion examples](docs/easing-lab.gif)
+
+**Observed:** This is a deterministic 8.4-second loop rendered from the current app at
+1200×800 and 20 fps. A fixed 128-color palette preserves the semantic curve colors, and the
+renderer verifies the loop boundary, timing metadata, frame count, and every optimized frame
+after decoding.
 
 > Evidence labels used below: **Observed** means exercised in this repository under the
 > stated conditions; **Derived** means based on the linked public source or standard
@@ -162,6 +167,7 @@ ruff format --check .
 ruff check .
 pytest
 python -m build
+python tools/render_readme_gif.py
 ```
 
 The headless test suite launches the real module entry point, renders a PNG through SDL's
@@ -181,7 +187,7 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 - **Inferred:** other SDL-supported desktop environments may work, but are not claimed until
   exercised by CI or a reported live test.
 - **Observed:** the repository contains no downloaded art, font, sound, or other media
-  assets. The README screenshot is rendered by Easing Lab itself.
+  assets. The README GIF and PNG preview are rendered by Easing Lab itself.
 - **Observed:** the easing implementation comes from the user-owned proof of concept and was
   reorganized into an original package without proprietary SDKs or decompiled sources.
 - **Derived:** Pygame is a separate LGPL-licensed dependency; its package metadata and
