@@ -4,63 +4,65 @@
 [![Python 3.10–3.13](https://img.shields.io/badge/python-3.10%E2%80%933.13-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-An interactive Pygame easing playground and a small, side-effect-free Python library.
-Compare motion curves, reshape them by dragging control points, export portable JSON, or
-call the same easings directly from a game.
+Easing Lab is a small Python easing library with a Pygame curve designer for seeing,
+shaping, and exporting motion.
 
 ![Animated Easing Lab designer showing nine curves, a curve editor, and motion examples](docs/easing-lab.gif)
 
-**Observed:** This is a deterministic 8.4-second loop rendered from the current app at
-1200×800 and 20 fps. A fixed 128-color palette preserves the semantic curve colors, and the
-renderer verifies the loop boundary, timing metadata, frame count, and every optimized frame
-after decoding.
-
-> Evidence labels used below: **Observed** means exercised in this repository under the
-> stated conditions; **Derived** means based on the linked public source or standard
-> mathematics; **Inferred** means expected but not yet verified in that environment.
-
-## What you can do
-
-- **Observed:** Run a standalone resizable designer with nine built-in easing presets.
-- **Observed:** Edit control points, reset a preset, and import or export versioned JSON.
-- **Observed:** Use easing functions without opening a window or initializing Pygame.
-- **Observed:** Interpolate floats and `pygame.Vector2` values with the same API.
-- **Derived:** The locked Sine / Cosine curve is the normalized x-projection of uniform
-  circular motion: `(1 - cos(pi*t)) / 2`.
-
-This repository is currently a GitHub review candidate and is not published on PyPI.
-
-## Run the designer
-
-Python 3.10–3.13 is supported by this release candidate.
+*The designer compares nine starting curves and lets you reshape eight of them.*
 
 ```bash
-git clone https://github.com/deviousname/easing-lab.git
-cd easing-lab
-python -m venv .venv
+pip install pygame-easing-lab
 ```
 
-Activate the environment:
+Easing Lab is not on PyPI yet. That is the planned install command after the first release;
+until then, use the [development setup](#development) below.
 
-```powershell
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
+Here is a complete animation using only the standard library and Easing Lab:
+
+```text
+import turtle
+from easing_lab import interpolate, ping_pong
+dot = turtle.Turtle("circle")
+dot.penup()
+def animate(frame=0):
+    dot.setx(interpolate(-200, 200, ping_pong(frame / 60), "sine"))
+    turtle.ontimer(lambda: animate(frame + 1), 16)
+animate()
+turtle.done()
 ```
+
+Easing remaps time: instead of moving at one constant speed, an object can start gently,
+land with weight, overshoot, bounce, or settle like a spring.
+
+## Launch the designer
+
+Install the optional Pygame app and run it:
 
 ```bash
-# macOS or Linux
-source .venv/bin/activate
-```
-
-Then install and run:
-
-```bash
-python -m pip install -e .
+pip install "pygame-easing-lab[app]"
 easing-lab
 ```
 
-`python -m easing_lab` launches the same designer. Use `easing-lab --help` for window,
-startup-file, screenshot, and version options.
+`python -m easing_lab` opens the same designer. Use `easing-lab --help` for window size,
+startup file, screenshot, and version options.
+
+## The nine designer curves
+
+The app keeps a focused 3×3 set of starting points. The library also provides separate In,
+Out, and In-Out variants for the Sine, Cubic, Quint, Back, Bounce, and Elastic families.
+
+| Curve | Feel |
+| --- | --- |
+| Linear | Constant speed |
+| Sine / Cosine | Smooth circular projection; kept exact and locked |
+| Smoothstep | Arrives and leaves at rest |
+| Smootherstep | Softer endpoint acceleration |
+| Cubic | A stronger S-curve |
+| Quintic | Very soft endpoints |
+| Back | Anticipation and overshoot |
+| Bounce | Impact and landing |
+| Elastic | Spring and settle |
 
 ### Controls
 
@@ -76,61 +78,57 @@ startup-file, screenshot, and version options.
 | Change speed | `-` / `+`, or `1` / `2` / `3` for 0.5× / 1× / 2× |
 | Quit | Escape or close the window |
 
-The Sine / Cosine preset stays exact and locked. Select any editable card before importing
-a custom Hermite curve; the import replaces only that card's working curve.
+Select an editable card before importing a custom curve. The import replaces only that
+card's working curve.
 
-## Use it as a library
+## Use the library
 
-Imports are intentionally quiet: no Pygame window, display, font, or audio initialization
-happens until the designer is launched.
+The math library does not import Pygame or open a window. Inputs are normalized to `0..1`,
+and `evaluate` and `interpolate` clamp that input range by default.
 
-### Interpolate a value
+### Evaluate and interpolate
 
 ```python
-from easing_lab import interpolate
+from easing_lab import evaluate, interpolate
 
-x = interpolate(40.0, 600.0, t=0.35, easing="sine_in_out")
+progress = evaluate("ease_out_cubic", 0.35)
+x = interpolate(40.0, 600.0, 0.35, "back")
 ```
 
-Inputs to `interpolate` are clamped to `0..1` by default. Overshooting easings such as
-`back` and `elastic` can still move outside the start/end range.
+Back and Elastic curves can move outside the start/end range by design. Pass
+`clamp_input=False` when you also want to evaluate time outside `0..1`.
 
-### Move a Pygame object
+The stable family-first keys are:
+
+- `linear`, `smoothstep`, and `smootherstep`
+- `sine_in`, `sine_out`, and `sine_in_out`
+- `cubic_in`, `cubic_out`, and `cubic_in_out`
+- `quint_in`, `quint_out`, and `quint_in_out`
+- `back_in`, `back_out`, and `back_in_out`
+- `bounce_in`, `bounce_out`, and `bounce_in_out`
+- `elastic_in`, `elastic_out`, and `elastic_in_out`
+
+The names used by [easings.net](https://easings.net/) are available in Python form too:
+`ease_in_sine`, `ease_out_cubic`, `ease_in_out_back`, and the matching names for every
+listed family. Short names such as `sine`, `cubic`, `quintic`, `back`, `bounce`, and
+`elastic` select the In-Out version. `EASINGS` exposes the full built-in registry.
+
+### Use vectors or your own value type
 
 ```python
 import pygame
-
-from easing_lab import interpolate, ping_pong
+from easing_lab import interpolate
 
 start = pygame.Vector2(80, 240)
 end = pygame.Vector2(720, 240)
-elapsed = 1.4
-
-t = ping_pong(elapsed, leg_seconds=1.2)
-position = interpolate(start, end, t, "back")
+position = interpolate(start, end, 0.4, "elastic_out")
 ```
 
-The interpolation protocol is deliberately small: values need subtraction, scalar
-multiplication, and addition. Floats and `pygame.Vector2` satisfy it.
+`interpolate` works with any value type that supports subtraction, multiplication by a
+float, and addition. Pygame's `Vector2` follows that small protocol, but Pygame is not
+required for floats or other compatible types.
 
-### Call a preset directly
-
-```python
-from easing_lab import elastic_in_out, evaluate
-
-raw = elastic_in_out(0.4)  # direct formula; expects normalized time
-safe = evaluate("elastic", 1.4)  # clamps the input to 1.0 first
-```
-
-Available stable keys are:
-
-`linear`, `sine_in_out`, `smoothstep`, `smootherstep`, `cubic_in_out`,
-`quint_in_out`, `back_in_out`, `bounce_in_out`, and `elastic_in_out`.
-
-Short aliases such as `sine`, `cubic`, `quintic`, `back`, `bounce`, and `elastic` are also
-accepted by `evaluate`, `interpolate`, and `resolve_easing`.
-
-### Load a curve exported by the designer
+### Load a curve from the designer
 
 ```python
 from easing_lab import load_easing
@@ -139,58 +137,40 @@ ease = load_easing("my_jump.json")
 height = ease(0.45)
 ```
 
-The loader validates the format name, version, control-point count, finite values,
-normalized time domain, and strict point ordering. It reconstructs coefficients from the
-control points rather than trusting duplicated coefficients in the file.
+See [the versioned JSON format](docs/curve-format.md) and
+[the complete Pygame example](examples/pygame_motion.py).
 
-See [the JSON format](docs/curve-format.md) and
-[a complete Pygame motion example](examples/pygame_motion.py).
+## Limitations
 
-## Design notes
-
-- **Observed:** The original proof of concept initialized Pygame and entered its event loop
-  during import. The release package moves all lifecycle work into `EasingLabApp` and
-  guarantees cleanup with `pygame.quit()`.
-- **Observed:** The original two-point Linear preset used zero Hermite endpoint slopes and
-  therefore evaluated as smoothstep. Two-point curves now use their chord slope; a
-  regression test fixes the expected quarter-point value at `0.25`.
-- **Observed:** Three-or-more-point custom curves retain zero endpoint slopes and centered
-  internal slopes, preserving the editor's arrive/leave-at-rest behavior.
-- **Derived:** Pygame's public guidance recommends `pygame.quit()` on exit; the app owns that
-  cleanup explicitly. See the [Pygame FAQ](https://www.pygame.org/wiki/FrequentlyAskedQuestions).
+- The visual designer needs Pygame and a desktop supported by SDL; the math library does not.
+- JSON format version 1 stores named built-ins or piecewise cubic Hermite curves. It is not a
+  general animation timeline or keyframe format.
+- CI covers Windows and Linux on Python 3.10 and 3.13. macOS is not part of the current
+  automated matrix.
 
 ## Development
 
 ```bash
+git clone https://github.com/deviousname/easing-lab.git
+cd easing-lab
+python -m venv .venv
 python -m pip install -e ".[dev]"
 ruff format --check .
 ruff check .
 pytest
 python -m build
-python tools/render_readme_gif.py
 ```
 
-The headless test suite launches the real module entry point, renders a PNG through SDL's
-dummy video driver, and checks that the artifact is a non-empty PNG. CI is configured to
-run the lint, test, and build gates on Windows and Linux with Python 3.10 and 3.13.
+The GIF can be reproduced with `python tools/render_readme_gif.py`. Read
+[CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Exact test conditions,
+artifact checks, dependency boundaries, and provenance are recorded in
+[docs/verification.md](docs/verification.md).
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+## Credits and license
 
-## Compatibility and provenance
+The Back, Bounce, and Elastic families descend from
+[Robert Penner's easing equations](https://robertpenner.com/easing/). The curve names and
+visual comparisons follow the conventions collected by [easings.net](https://easings.net/).
 
-- **Observed (Windows 11, Python 3.13.14, Pygame 2.6.1):** a clean virtual environment
-  installed the project, ran 40 tests, invoked the installed `easing-lab` entry point,
-  rendered a 76,076-byte PNG through SDL's dummy driver, and built both wheel and source
-  distributions.
-- **Observed (release verification):** exact local tool versions and test results are
-  recorded in the Git commit handoff; CI results are authoritative for its listed matrix.
-- **Inferred:** other SDL-supported desktop environments may work, but are not claimed until
-  exercised by CI or a reported live test.
-- **Observed:** the repository contains no downloaded art, font, sound, or other media
-  assets. The README GIF and PNG preview are rendered by Easing Lab itself.
-- **Observed:** the easing implementation comes from the user-owned proof of concept and was
-  reorganized into an original package without proprietary SDKs or decompiled sources.
-- **Derived:** Pygame is a separate LGPL-licensed dependency; its package metadata and
-  license are available on [PyPI](https://pypi.org/project/pygame/).
-
-Easing Lab's own source is available under the [MIT License](LICENSE).
+Easing Lab's source is available under the [MIT License](LICENSE). Pygame is an optional,
+separately licensed dependency used by the designer and Pygame example.

@@ -11,7 +11,15 @@ from pathlib import Path
 
 os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
 
-import pygame
+try:
+    import pygame
+except ModuleNotFoundError as exc:
+    if exc.name != "pygame":
+        raise
+    raise SystemExit(
+        "The Easing Lab designer needs Pygame. Install it with:\n"
+        '  pip install "pygame-easing-lab[app]"'
+    ) from None
 
 from . import __version__
 from .core import (

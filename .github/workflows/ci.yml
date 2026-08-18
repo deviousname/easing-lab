@@ -8,6 +8,37 @@ permissions:
   contents: read
 
 jobs:
+  core-only:
+    name: Core only / Python 3.13
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install package without extras
+        run: python -m pip install --upgrade pip && python -m pip install -e .
+
+      - name: Confirm Pygame is absent and import the library
+        run: python -c "import importlib.util; import easing_lab; assert importlib.util.find_spec('pygame') is None"
+
+      - name: Check missing-designer guidance
+        run: >-
+          python -c "import subprocess;
+          result = subprocess.run(['easing-lab'], capture_output=True, text=True);
+          assert result.returncode != 0;
+          assert 'pip install \"pygame-easing-lab[app]\"' in result.stderr, result.stderr"
+
+      - name: Install test runner
+        run: python -m pip install "pytest>=8.3"
+
+      - name: Test standalone core
+        run: pytest tests/test_core.py
+
   quality:
     name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}

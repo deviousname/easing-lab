@@ -4,36 +4,91 @@ import math
 import pytest
 
 from easing_lab import (
+    EASINGS,
     PRESETS,
     Curve,
     InvalidCurveError,
+    back_in,
+    back_out,
+    bounce_in,
+    bounce_out,
+    cubic_in,
+    cubic_out,
     curve_from_preset,
+    ease_out_cubic,
     easing_from_dict,
+    elastic_in,
+    elastic_out,
     evaluate,
     interpolate,
     load_easing,
     ping_pong,
     preset_document,
+    quint_in,
+    quint_out,
     resolve_easing,
+    sine_in,
+    sine_out,
 )
 
 
-@pytest.mark.parametrize("preset", PRESETS.values(), ids=lambda preset: preset.key)
-def test_every_preset_has_normalized_endpoints(preset):
-    assert preset(0.0) == pytest.approx(0.0, abs=1e-12)
-    assert preset(1.0) == pytest.approx(1.0, abs=1e-12)
+@pytest.mark.parametrize(("name", "easing"), EASINGS.items(), ids=EASINGS)
+def test_every_builtin_easing_has_normalized_endpoints(name, easing):
+    assert easing(0.0) == pytest.approx(0.0, abs=1e-12), name
+    assert easing(1.0) == pytest.approx(1.0, abs=1e-12), name
+
+
+def test_designer_keeps_nine_curated_starting_presets():
+    assert tuple(PRESETS) == (
+        "linear",
+        "sine_in_out",
+        "smoothstep",
+        "smootherstep",
+        "cubic_in_out",
+        "quint_in_out",
+        "back_in_out",
+        "bounce_in_out",
+        "elastic_in_out",
+    )
+
+
+@pytest.mark.parametrize(
+    ("ease_in", "ease_out"),
+    [
+        (sine_in, sine_out),
+        (cubic_in, cubic_out),
+        (quint_in, quint_out),
+        (back_in, back_out),
+        (bounce_in, bounce_out),
+        (elastic_in, elastic_out),
+    ],
+)
+@pytest.mark.parametrize("t", [0.0, 0.1, 0.25, 0.5, 0.75, 0.9, 1.0])
+def test_out_variants_are_reflections_of_in_variants(ease_in, ease_out, t):
+    assert ease_out(t) == pytest.approx(1.0 - ease_in(1.0 - t), abs=1e-12)
 
 
 @pytest.mark.parametrize(
     ("name", "t", "expected"),
     [
         ("linear", 0.25, 0.25),
+        ("sine_in", 0.5, 0.2928932188134524),
+        ("sine_out", 0.5, 0.7071067811865475),
         ("sine_in_out", 0.5, 0.5),
         ("smoothstep", 0.25, 0.15625),
         ("smootherstep", 0.25, 0.103515625),
+        ("cubic_in", 0.25, 0.015625),
+        ("cubic_out", 0.25, 0.578125),
         ("cubic_in_out", 0.25, 0.0625),
+        ("quint_in", 0.25, 0.0009765625),
+        ("quint_out", 0.25, 0.7626953125),
         ("quint_in_out", 0.25, 0.015625),
+        ("back_in", 0.5, -0.0876975),
+        ("back_out", 0.5, 1.0876975),
+        ("bounce_in", 0.25, 0.02734375),
         ("bounce_in_out", 0.25, 0.1171875),
+        ("elastic_in", 0.5, -0.015625),
+        ("elastic_out", 0.5, 1.015625),
         ("elastic_in_out", 0.5, 0.5),
     ],
 )
@@ -62,6 +117,8 @@ def test_interpolate_supports_scalar_values_and_overshoot():
 def test_resolve_easing_accepts_documented_aliases():
     assert resolve_easing("Sine / Cosine")(0.5) == pytest.approx(0.5)
     assert resolve_easing("quintic")(0.5) == pytest.approx(0.5)
+    assert resolve_easing("ease_out_cubic") is cubic_out
+    assert ease_out_cubic is cubic_out
     with pytest.raises(KeyError, match="unknown easing"):
         resolve_easing("not-real")
 

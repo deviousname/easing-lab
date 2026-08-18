@@ -1,7 +1,15 @@
 import os
 import subprocess
 import sys
+from importlib.util import find_spec
 from pathlib import Path
+
+import pytest
+
+pytestmark = pytest.mark.skipif(
+    find_spec("pygame") is None,
+    reason='designer tests require the "app" extra',
+)
 
 
 def test_library_import_has_no_pygame_initialization_side_effects():

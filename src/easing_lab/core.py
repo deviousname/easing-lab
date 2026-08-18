@@ -42,10 +42,24 @@ def clamp01(value: float) -> float:
 
 # Derived: standard normalized easing equations, preserved from the original
 # proof of concept. They have no Pygame dependency and no import-time effects.
+# The Back, Bounce, and Elastic families descend from Robert Penner's easing
+# equations; the formulas and family names are also catalogued by easings.net.
 def linear(t: float) -> float:
     """Move at constant speed."""
 
     return t
+
+
+def sine_in(t: float) -> float:
+    """Start a sine-based movement slowly."""
+
+    return 1.0 - math.cos((math.pi * t) / 2.0)
+
+
+def sine_out(t: float) -> float:
+    """Finish a sine-based movement slowly."""
+
+    return math.sin((math.pi * t) / 2.0)
 
 
 def sine_in_out(t: float) -> float:
@@ -66,12 +80,36 @@ def smootherstep(t: float) -> float:
     return t**3 * (t * (t * 6.0 - 15.0) + 10.0)
 
 
+def cubic_in(t: float) -> float:
+    """Accelerate with a cubic curve."""
+
+    return t**3
+
+
+def cubic_out(t: float) -> float:
+    """Decelerate with a cubic curve."""
+
+    return 1.0 - (1.0 - t) ** 3
+
+
 def cubic_in_out(t: float) -> float:
     """Symmetric cubic ease-in-out."""
 
     if t < 0.5:
         return 4.0 * t**3
     return 1.0 - ((-2.0 * t + 2.0) ** 3) / 2.0
+
+
+def quint_in(t: float) -> float:
+    """Accelerate with a quintic curve."""
+
+    return t**5
+
+
+def quint_out(t: float) -> float:
+    """Decelerate with a quintic curve."""
+
+    return 1.0 - (1.0 - t) ** 5
 
 
 def quint_in_out(t: float) -> float:
@@ -82,8 +120,25 @@ def quint_in_out(t: float) -> float:
     return 1.0 - ((-2.0 * t + 2.0) ** 5) / 2.0
 
 
+def back_in(t: float) -> float:
+    """Anticipate the movement using Robert Penner's Back family."""
+
+    c1 = 1.70158
+    c3 = c1 + 1.0
+    return c3 * t**3 - c1 * t**2
+
+
+def back_out(t: float) -> float:
+    """Overshoot the target using Robert Penner's Back family."""
+
+    c1 = 1.70158
+    c3 = c1 + 1.0
+    x = t - 1.0
+    return 1.0 + c3 * x**3 + c1 * x**2
+
+
 def back_in_out(t: float) -> float:
-    """Ease with anticipation before, and overshoot after, the movement."""
+    """Anticipate and overshoot using Robert Penner's Back family."""
 
     c1 = 1.70158
     c2 = c1 * 1.525
@@ -95,7 +150,7 @@ def back_in_out(t: float) -> float:
 
 
 def bounce_out(t: float) -> float:
-    """Piecewise quadratic bounce-out easing."""
+    """Land with a rebound using Robert Penner's Bounce family."""
 
     n1 = 7.5625
     d1 = 2.75
@@ -111,16 +166,40 @@ def bounce_out(t: float) -> float:
     return n1 * t * t + 0.984375
 
 
+def bounce_in(t: float) -> float:
+    """Start with a rebound using Robert Penner's Bounce family."""
+
+    return 1.0 - bounce_out(1.0 - t)
+
+
 def bounce_in_out(t: float) -> float:
-    """Symmetric bounce ease-in-out."""
+    """Rebound at both ends using Robert Penner's Bounce family."""
 
     if t < 0.5:
         return (1.0 - bounce_out(1.0 - 2.0 * t)) / 2.0
     return (1.0 + bounce_out(2.0 * t - 1.0)) / 2.0
 
 
+def elastic_in(t: float) -> float:
+    """Wind up with Robert Penner's oscillating Elastic family."""
+
+    if t == 0.0 or t == 1.0:
+        return t
+    c4 = (2.0 * math.pi) / 3.0
+    return -(2.0 ** (10.0 * t - 10.0)) * math.sin((10.0 * t - 10.75) * c4)
+
+
+def elastic_out(t: float) -> float:
+    """Settle with Robert Penner's oscillating Elastic family."""
+
+    if t == 0.0 or t == 1.0:
+        return t
+    c4 = (2.0 * math.pi) / 3.0
+    return 2.0 ** (-10.0 * t) * math.sin((10.0 * t - 0.75) * c4) + 1.0
+
+
 def elastic_in_out(t: float) -> float:
-    """Symmetric oscillating ease-in-out."""
+    """Wind up and settle using Robert Penner's Elastic family."""
 
     if t == 0.0 or t == 1.0:
         return t
@@ -128,6 +207,54 @@ def elastic_in_out(t: float) -> float:
     if t < 0.5:
         return -(2.0 ** (20.0 * t - 10.0) * math.sin((20.0 * t - 11.125) * c5)) / 2.0
     return (2.0 ** (-20.0 * t + 10.0) * math.sin((20.0 * t - 11.125) * c5)) / 2.0 + 1.0
+
+
+# easings.net orders these names as ease + direction + family. Keep the
+# existing family-first API while making those familiar spellings importable.
+ease_in_sine = sine_in
+ease_out_sine = sine_out
+ease_in_out_sine = sine_in_out
+ease_in_cubic = cubic_in
+ease_out_cubic = cubic_out
+ease_in_out_cubic = cubic_in_out
+ease_in_quint = quint_in
+ease_out_quint = quint_out
+ease_in_out_quint = quint_in_out
+ease_in_back = back_in
+ease_out_back = back_out
+ease_in_out_back = back_in_out
+ease_in_bounce = bounce_in
+ease_out_bounce = bounce_out
+ease_in_out_bounce = bounce_in_out
+ease_in_elastic = elastic_in
+ease_out_elastic = elastic_out
+ease_in_out_elastic = elastic_in_out
+
+_EASING_ITEMS = (
+    ("linear", linear),
+    ("sine_in", sine_in),
+    ("sine_out", sine_out),
+    ("sine_in_out", sine_in_out),
+    ("smoothstep", smoothstep),
+    ("smootherstep", smootherstep),
+    ("cubic_in", cubic_in),
+    ("cubic_out", cubic_out),
+    ("cubic_in_out", cubic_in_out),
+    ("quint_in", quint_in),
+    ("quint_out", quint_out),
+    ("quint_in_out", quint_in_out),
+    ("back_in", back_in),
+    ("back_out", back_out),
+    ("back_in_out", back_in_out),
+    ("bounce_in", bounce_in),
+    ("bounce_out", bounce_out),
+    ("bounce_in_out", bounce_in_out),
+    ("elastic_in", elastic_in),
+    ("elastic_out", elastic_out),
+    ("elastic_in_out", elastic_in_out),
+)
+
+EASINGS: Mapping[str, EasingFunction] = MappingProxyType(dict(_EASING_ITEMS))
 
 
 @dataclass(frozen=True, slots=True)
@@ -223,12 +350,30 @@ PRESETS: Mapping[str, Preset] = MappingProxyType({preset.key: preset for preset 
 _ALIASES = {
     "sine": "sine_in_out",
     "sine_cosine": "sine_in_out",
+    "ease_in_sine": "sine_in",
+    "ease_out_sine": "sine_out",
+    "ease_in_out_sine": "sine_in_out",
     "cubic": "cubic_in_out",
+    "ease_in_cubic": "cubic_in",
+    "ease_out_cubic": "cubic_out",
+    "ease_in_out_cubic": "cubic_in_out",
     "quintic": "quint_in_out",
     "quint": "quint_in_out",
+    "ease_in_quint": "quint_in",
+    "ease_out_quint": "quint_out",
+    "ease_in_out_quint": "quint_in_out",
     "back": "back_in_out",
+    "ease_in_back": "back_in",
+    "ease_out_back": "back_out",
+    "ease_in_out_back": "back_in_out",
     "bounce": "bounce_in_out",
+    "ease_in_bounce": "bounce_in",
+    "ease_out_bounce": "bounce_out",
+    "ease_in_out_bounce": "bounce_in_out",
     "elastic": "elastic_in_out",
+    "ease_in_elastic": "elastic_in",
+    "ease_out_elastic": "elastic_out",
+    "ease_in_out_elastic": "elastic_in_out",
 }
 
 
@@ -238,14 +383,14 @@ def _normalize_name(name: str) -> str:
 
 
 def resolve_easing(easing: str | EasingFunction | Preset) -> EasingFunction:
-    """Resolve a preset name or return an easing callable unchanged."""
+    """Resolve a built-in easing name or return a callable unchanged."""
 
     if isinstance(easing, str):
         key = _normalize_name(easing)
         try:
-            return PRESETS[key].function
+            return EASINGS[key]
         except KeyError as exc:
-            names = ", ".join(PRESETS)
+            names = ", ".join(EASINGS)
             raise KeyError(f"unknown easing {easing!r}; choose one of: {names}") from exc
     if isinstance(easing, Preset):
         return easing.function
@@ -511,6 +656,7 @@ def load_easing(path: str | Path) -> EasingFunction:
 
 
 __all__ = [
+    "EASINGS",
     "FORMAT_NAME",
     "FORMAT_VERSION",
     "PRESETS",
@@ -519,24 +665,53 @@ __all__ = [
     "EasingFunction",
     "InvalidCurveError",
     "Preset",
+    "back_in",
     "back_in_out",
+    "back_out",
+    "bounce_in",
     "bounce_in_out",
     "bounce_out",
     "clamp",
     "clamp01",
+    "cubic_in",
     "cubic_in_out",
+    "cubic_out",
     "curve_from_preset",
+    "ease_in_back",
+    "ease_in_bounce",
+    "ease_in_cubic",
+    "ease_in_elastic",
+    "ease_in_out_back",
+    "ease_in_out_bounce",
+    "ease_in_out_cubic",
+    "ease_in_out_elastic",
+    "ease_in_out_quint",
+    "ease_in_out_sine",
+    "ease_in_quint",
+    "ease_in_sine",
+    "ease_out_back",
+    "ease_out_bounce",
+    "ease_out_cubic",
+    "ease_out_elastic",
+    "ease_out_quint",
+    "ease_out_sine",
     "easing_from_dict",
+    "elastic_in",
     "elastic_in_out",
+    "elastic_out",
     "evaluate",
     "interpolate",
     "linear",
     "load_easing",
     "ping_pong",
     "preset_document",
+    "quint_in",
     "quint_in_out",
+    "quint_out",
     "resolve_easing",
+    "sine_in",
     "sine_in_out",
+    "sine_out",
     "smootherstep",
     "smoothstep",
 ]
