@@ -80,6 +80,21 @@ Out, and In-Out variants for the Sine, Cubic, Quint, Back, Bounce, and Elastic f
 Select an editable card before importing a custom curve. The import replaces only that
 card's working curve.
 
+## Play Easing Gauntlet
+
+The repository includes a small playable Pygame game that puts the easing functions into
+motion. Move between five lanes to collect motion cores, dodge red glitches, and spend a
+limited safety pulse when a lane gets crowded. Falling pieces name the curve driving them,
+while lane changes, spawn effects, particles, score feedback, and the pulse use additional
+easings from the library.
+
+```bash
+python examples/easing_gauntlet.py
+```
+
+Use A/D or the arrow keys to move, Space to pulse, P to pause, and R to restart. Install
+the `app` extra first if Pygame is not already available.
+
 ## Use the library
 
 The math library does not import Pygame or open a window. Inputs are normalized to `0..1`,
@@ -136,8 +151,9 @@ ease = load_easing("my_jump.json")
 height = ease(0.45)
 ```
 
-See [the versioned JSON format](https://github.com/deviousname/easing-lab/blob/main/docs/curve-format.md)
-and [the complete Pygame example](https://github.com/deviousname/easing-lab/blob/main/examples/pygame_motion.py).
+See [the versioned JSON format](https://github.com/deviousname/easing-lab/blob/main/docs/curve-format.md),
+[the minimal Pygame integration](https://github.com/deviousname/easing-lab/blob/main/examples/pygame_motion.py),
+and [the playable Easing Gauntlet example](https://github.com/deviousname/easing-lab/blob/main/examples/easing_gauntlet.py).
 
 ## Limitations
 

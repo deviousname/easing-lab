@@ -88,6 +88,39 @@ This document keeps the engineering evidence behind the public README.
   registered without a release. No registration or upload was attempted, so final acceptance
   remains a publishing-time check.
 
+## 0.2.0 local verification
+
+All checks in this section ran on Windows 11 build 26200 with CPython 3.13.14. Pygame
+checks used Pygame 2.6.1, the minimum version supported by the `app` extra.
+
+### Playable example
+
+- **Observed:** `examples/easing_gauntlet.py` completed a deterministic 240-frame run with
+  SDL's dummy video and audio drivers and exited successfully.
+- **Observed:** that run rendered a 1100x720 PNG of 43,136 bytes. Visual inspection confirmed
+  that the arena, current score and resources, curve labels, collected-core particles, and a
+  spent safety pulse were all visible and that overshooting drops remained clipped to the
+  play area.
+- **Observed:** a separate long deterministic run reached the game-over state and rendered
+  its animated restart panel successfully.
+- **Observed:** the automated run exercises lane movement and the pulse input path. A visible
+  desktop session with live keyboard input was not part of this verification pass.
+
+### Full project and distributions
+
+- **Observed:** `ruff format --check .` reported 18 files already formatted, and
+  `ruff check .` passed.
+- **Observed:** the full suite reported `107 passed in 1.61s`. This includes the new
+  deterministic headless game smoke test.
+- **Observed:** `uv build` produced `easing_lab-0.2.0.tar.gz` and
+  `easing_lab-0.2.0-py3-none-any.whl`; both passed `twine check`.
+- **Observed:** the first 0.2.0 source-archive inspection found three untracked local operator
+  notes. The source-distribution exclusions were tightened, and the rebuilt archive contains
+  the game and its smoke test without those notes.
+- **Observed:** the corrected wheel installed without dependencies into a new CPython 3.13
+  environment. Both distribution metadata and `easing_lab.__version__` reported `0.2.0`, the
+  import succeeded, and Pygame remained absent as required for the base install.
+
 ## 0.1.0 local release verification
 
 All checks in this section ran on Windows 11 build 26200 with CPython 3.13.14.

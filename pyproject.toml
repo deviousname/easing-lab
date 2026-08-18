@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "easing-lab"
-version = "0.1.0"
+version = "0.2.0"
 description = "Interactive Pygame easing designer and side-effect-free easing library"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
@@ -46,7 +46,14 @@ Issues = "https://github.com/deviousname/easing-lab/issues"
 Source = "https://github.com/deviousname/easing-lab"
 
 [tool.hatch.build.targets.sdist]
-exclude = ["docs/easing-lab.gif", "docs/easing-lab.png", ".github", ".pytest-tmp"]
+exclude = [
+  "docs/easing-lab.gif",
+  "docs/easing-lab.png",
+  ".github",
+  ".pytest-tmp",
+  "HOUSEKEEPING-*.md",
+  "SESSION-CONTEXT.md",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/easing_lab"]
