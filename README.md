@@ -171,5 +171,12 @@ The Back, Bounce, and Elastic families descend from
 [Robert Penner's easing equations](https://robertpenner.com/easing/). The curve names and
 visual comparisons follow the conventions collected by [easings.net](https://easings.net/).
 
-Easing Lab's source is available under the [MIT License](https://github.com/deviousname/easing-lab/blob/main/LICENSE). Pygame is an optional,
-separately licensed dependency used by the designer and Pygame example.
+**Your exported curve data is unrestricted.** JSON files created or exported with Easing
+Lab may be used, modified, redistributed, and sold in open- or closed-source projects,
+including commercial games, without attribution and without including Easing Lab's license.
+This permission applies to the exported curve data. If you copy or redistribute Easing Lab's
+application or library code, the MIT License still applies to that code.
+
+Easing Lab's source is available under the
+[MIT License](https://github.com/deviousname/easing-lab/blob/main/LICENSE). Pygame is an
+optional, separately licensed dependency used by the designer and Pygame example.
