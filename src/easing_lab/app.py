@@ -54,9 +54,9 @@ WHITE = (255, 255, 255)
 
 PRESET_COLORS = {
     "linear": MUTED,
-    "sine_in_out": ACCENT,
     "smoothstep": GREEN,
-    "smootherstep": YELLOW,
+    "expo_out": YELLOW,
+    "steps": ACCENT,
     "cubic_in_out": PURPLE,
     "quint_in_out": ORANGE,
     "back_in_out": PINK,

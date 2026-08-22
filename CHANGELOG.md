@@ -7,6 +7,26 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## 0.3.0 - 2026-08-21
+
+### Added
+
+- Expo In, Out, and In-Out library functions and easings.net-style aliases.
+- A five-stage Steps easing with `step` and `stepped` resolver aliases.
+
+### Changed
+
+- Consolidated the designer's similar Sine / Cosine, Smoothstep, and Smootherstep cards
+  under the clearer Smoothstep name.
+- Replaced the two freed designer slots with visibly distinct Expo Out and Steps cards.
+- Refreshed the designer preview media for the new nine-curve set.
+- Bumped the package version to 0.3.0.
+
+### Compatibility
+
+- Sine, Smoothstep, and Smootherstep library functions, registry keys, aliases, and legacy
+  closed-form documents remain supported.
+
 ## 0.2.0 - 2026-08-17
 
 ### Added

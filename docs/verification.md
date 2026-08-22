@@ -23,15 +23,16 @@ This document keeps the engineering evidence behind the public README.
 - **Observed:** importing `easing_lab` does not open a window or initialize Pygame display,
   font, or audio state.
 - **Observed:** the standalone designer is resizable and provides nine curated starting
-  curves. Eight can be edited and the exact Sine / Cosine projection remains locked.
+  curves. Eight can be edited and the discontinuous Steps curve remains locked.
 - **Observed:** control points can be edited, reset, imported, and exported as versioned
   JSON.
-- **Derived:** the locked Sine / Cosine curve is the normalized one-dimensional projection
-  of circular motion: `(1 - cos(pi*t)) / 2`.
-- **Observed:** the public registry contains 21 built-in keys: Linear, Smoothstep,
-  Smootherstep, and In, Out, and In-Out variants for six easing families.
+- **Derived:** the locked Steps curve uses five end-aligned stages:
+  `floor(5*t) / 5`, with an explicit endpoint value of `1`.
+- **Observed:** the public registry contains 25 built-in keys: Linear, Smoothstep,
+  Smootherstep, Steps, and In, Out, and In-Out variants for seven easing families.
 - **Observed:** endpoint tests cover every built-in key. Reflection tests independently
-  enforce `out(t) == 1 - in(1 - t)` for Sine, Cubic, Quint, Back, Bounce, and Elastic.
+  enforce `out(t) == 1 - in(1 - t)` for Sine, Cubic, Quint, Expo, Back, Bounce, and
+  Elastic.
 - **Observed:** the representative-value test uses hand-derived literals independent of
   implementation constants and code paths.
 
@@ -55,7 +56,7 @@ This document keeps the engineering evidence behind the public README.
 - **Observed:** `docs/easing-lab.gif` is a 1200×800, 168-frame animation at 20 frames per
   second. Its 8.4-second cycle has no duplicate endpoint and uses a fixed 128-color palette.
 - **Observed:** the renderer verifies the loop boundary, timing metadata, frame count, and
-  every optimized frame after decoding. The refreshed artifact is 2,598,071 bytes.
+  every optimized frame after decoding. The refreshed artifact is 2,508,667 bytes.
 - **Observed:** the PNG preview and animated GIFs contain only graphics rendered by Easing Lab
   itself; the repository contains no downloaded font, sound, art, or other media asset.
 
@@ -87,6 +88,32 @@ This document keeps the engineering evidence behind the public README.
   name can still be rejected when it is too similar to another project, prohibited, or
   registered without a release. No registration or upload was attempted, so final acceptance
   remains a publishing-time check.
+
+## 0.3.0 local verification
+
+All checks in this section ran on Windows with CPython 3.13.14 and Pygame 2.6.1.
+
+- **Observed:** sampling 1,001 evenly spaced times found a maximum output difference of
+  `0.0100` between Sine In-Out and Smoothstep, supporting their consolidation in the
+  curated designer without removing either library function.
+- **Observed:** the full suite reported `126 passed`. It covers all 25 registry endpoints,
+  the Expo reflection identity and fixed values, the Steps plateaus, the exact nine-card
+  designer set, and loading legacy Sine preset documents.
+- **Observed:** `ruff format --check --no-cache .` reported 10 files already formatted, and
+  `ruff check --no-cache .` passed.
+- **Observed:** a deterministic 1440×960 designer screenshot rendered successfully at
+  75,720 bytes. Visual inspection confirmed that Smoothstep appears once, Expo Out is
+  strongly front-loaded, Steps has five plateaus, all labels fit, and the remaining cards
+  and editor retain their established layout.
+- **Observed:** the refreshed 128-color README GIF rendered 168 frames at 20 fps with a mean
+  channel error of `0.651` and passed the renderer's decode, timing, and loop checks.
+- **Observed:** `uv build` produced `easing_lab-0.3.0.tar.gz` and
+  `easing_lab-0.3.0-py3-none-any.whl`; both passed `twine check`. Archive inspection
+  confirmed that the source distribution includes the examples and tests while excluding
+  the README media as configured.
+- **Observed:** the wheel installed without dependencies into a fresh CPython 3.13 virtual
+  environment. It reported version `0.3.0`, exposed 25 built-ins, evaluated Expo Out and
+  Steps correctly, and did not install Pygame.
 
 ## 0.2.0 local verification
 

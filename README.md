@@ -48,15 +48,16 @@ startup file, screenshot, and version options.
 
 ## The nine designer curves
 
-The app keeps a focused 3×3 set of starting points. The library also provides separate In,
-Out, and In-Out variants for the Sine, Cubic, Quint, Back, Bounce, and Elastic families.
+The app keeps a focused 3×3 set of visibly distinct starting points. The library also
+provides separate In, Out, and In-Out variants for the Sine, Cubic, Quint, Expo, Back,
+Bounce, and Elastic families.
 
 | Curve | Feel |
 | --- | --- |
 | Linear | Constant speed |
-| Sine / Cosine | Smooth circular projection; kept exact and locked |
-| Smoothstep | Arrives and leaves at rest |
-| Smootherstep | Softer endpoint acceleration |
+| Smoothstep | The essential smooth S-curve |
+| Expo Out | Snaps forward, then settles gradually |
+| Steps | Five discrete jumps; kept exact and locked |
 | Cubic | A stronger S-curve |
 | Quintic | Very soft endpoints |
 | Back | Anticipation and overshoot |
@@ -119,18 +120,24 @@ Back and Elastic curves can move outside the start/end range by design. Pass
 
 The stable family-first keys are:
 
-- `linear`, `smoothstep`, and `smootherstep`
+- `linear`, `smoothstep`, `smootherstep`, and `steps`
 - `sine_in`, `sine_out`, and `sine_in_out`
 - `cubic_in`, `cubic_out`, and `cubic_in_out`
 - `quint_in`, `quint_out`, and `quint_in_out`
+- `expo_in`, `expo_out`, and `expo_in_out`
 - `back_in`, `back_out`, and `back_in_out`
 - `bounce_in`, `bounce_out`, and `bounce_in_out`
 - `elastic_in`, `elastic_out`, and `elastic_in_out`
 
 The names used by [easings.net](https://easings.net/) are available in Python form too:
-`ease_in_sine`, `ease_out_cubic`, `ease_in_out_back`, and the matching names for every
-listed family. Short names such as `sine`, `cubic`, `quintic`, `back`, `bounce`, and
-`elastic` select the In-Out version. `EASINGS` exposes the full built-in registry.
+`ease_in_sine`, `ease_out_cubic`, `ease_in_out_expo`, and the matching names for every
+three-direction family. Short names such as `sine`, `cubic`, `quintic`, `expo`, `back`,
+`bounce`, and `elastic` select the In-Out version. `step` and `stepped` select `steps`.
+`EASINGS` exposes the full built-in registry.
+
+Sine In-Out and Smootherstep remain stable library functions and registry keys for existing
+code and saved documents. The designer presents their shared use case once, as Smoothstep,
+instead of spending three cards on nearly identical motion.
 
 ### Use vectors or your own value type
 
