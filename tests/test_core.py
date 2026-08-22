@@ -20,6 +20,8 @@ from easing_lab import (
     elastic_in,
     elastic_out,
     evaluate,
+    expo_in,
+    expo_out,
     interpolate,
     load_easing,
     ping_pong,
@@ -29,6 +31,7 @@ from easing_lab import (
     resolve_easing,
     sine_in,
     sine_out,
+    steps,
 )
 
 
@@ -41,9 +44,9 @@ def test_every_builtin_easing_has_normalized_endpoints(name, easing):
 def test_designer_keeps_nine_curated_starting_presets():
     assert tuple(PRESETS) == (
         "linear",
-        "sine_in_out",
         "smoothstep",
-        "smootherstep",
+        "expo_out",
+        "steps",
         "cubic_in_out",
         "quint_in_out",
         "back_in_out",
@@ -58,6 +61,7 @@ def test_designer_keeps_nine_curated_starting_presets():
         (sine_in, sine_out),
         (cubic_in, cubic_out),
         (quint_in, quint_out),
+        (expo_in, expo_out),
         (back_in, back_out),
         (bounce_in, bounce_out),
         (elastic_in, elastic_out),
@@ -83,6 +87,10 @@ def test_out_variants_are_reflections_of_in_variants(ease_in, ease_out, t):
         ("quint_in", 0.25, 0.0009765625),
         ("quint_out", 0.25, 0.7626953125),
         ("quint_in_out", 0.25, 0.015625),
+        ("expo_in", 0.5, 0.03125),
+        ("expo_out", 0.1, 0.5),
+        ("expo_in_out", 0.25, 0.015625),
+        ("steps", 0.79, 0.6),
         ("back_in", 0.5, -0.0876975),
         ("back_out", 0.5, 1.0876975),
         ("bounce_in", 0.25, 0.02734375),
@@ -117,10 +125,32 @@ def test_interpolate_supports_scalar_values_and_overshoot():
 def test_resolve_easing_accepts_documented_aliases():
     assert resolve_easing("Sine / Cosine")(0.5) == pytest.approx(0.5)
     assert resolve_easing("quintic")(0.5) == pytest.approx(0.5)
+    assert resolve_easing("exponential")(0.5) == pytest.approx(0.5)
+    assert resolve_easing("stepped") is steps
     assert resolve_easing("ease_out_cubic") is cubic_out
     assert ease_out_cubic is cubic_out
     with pytest.raises(KeyError, match="unknown easing"):
         resolve_easing("not-real")
+
+
+def test_similar_s_curves_are_consolidated_only_in_the_designer():
+    assert PRESETS["smoothstep"].name == "Smoothstep"
+    assert {"sine_in_out", "smoothstep", "smootherstep"} & PRESETS.keys() == {"smoothstep"}
+    assert {"sine_in_out", "smoothstep", "smootherstep"} <= EASINGS.keys()
+
+
+def test_steps_holds_each_level_until_the_next_jump():
+    assert steps(0.0) == 0.0
+    assert steps(0.19) == 0.0
+    assert steps(0.2) == 0.2
+    assert steps(0.99) == 0.8
+    assert steps(1.0) == 1.0
+
+
+def test_expo_out_is_front_loaded_and_distinct_from_symmetric_presets():
+    assert expo_out(0.1) == 0.5
+    assert expo_out(0.25) > 0.8
+    assert expo_out(0.25) != pytest.approx(1.0 - expo_out(0.75), abs=1e-3)
 
 
 @pytest.mark.parametrize(
@@ -192,7 +222,18 @@ def test_custom_curve_json_round_trip_uses_control_points_as_source_of_truth(tmp
 
 
 def test_closed_form_document_loads_the_named_preset():
-    payload = preset_document("sine_in_out")
+    payload = preset_document("steps")
+    loaded = easing_from_dict(payload)
+    assert loaded(0.59) == pytest.approx(0.4, abs=1e-12)
+
+
+def test_legacy_sine_preset_documents_remain_loadable():
+    payload = {
+        "format": "easing-lab",
+        "version": 1,
+        "curve_type": "closed_form",
+        "preset": "sine_in_out",
+    }
     loaded = easing_from_dict(payload)
     assert loaded(0.5) == pytest.approx(0.5, abs=1e-12)
 

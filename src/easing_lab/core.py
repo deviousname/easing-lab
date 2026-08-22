@@ -80,6 +80,14 @@ def smootherstep(t: float) -> float:
     return t**3 * (t * (t * 6.0 - 15.0) + 10.0)
 
 
+def steps(t: float) -> float:
+    """Quantize progress into five equal, end-aligned jumps."""
+
+    if t >= 1.0:
+        return 1.0
+    return math.floor(t * 5.0) / 5.0
+
+
 def cubic_in(t: float) -> float:
     """Accelerate with a cubic curve."""
 
@@ -118,6 +126,32 @@ def quint_in_out(t: float) -> float:
     if t < 0.5:
         return 16.0 * t**5
     return 1.0 - ((-2.0 * t + 2.0) ** 5) / 2.0
+
+
+def expo_in(t: float) -> float:
+    """Accelerate exponentially from rest."""
+
+    if t == 0.0:
+        return 0.0
+    return 2.0 ** (10.0 * t - 10.0)
+
+
+def expo_out(t: float) -> float:
+    """Move immediately, then settle exponentially."""
+
+    if t == 1.0:
+        return 1.0
+    return 1.0 - 2.0 ** (-10.0 * t)
+
+
+def expo_in_out(t: float) -> float:
+    """Symmetric exponential ease-in-out."""
+
+    if t == 0.0 or t == 1.0:
+        return t
+    if t < 0.5:
+        return 2.0 ** (20.0 * t - 10.0) / 2.0
+    return (2.0 - 2.0 ** (-20.0 * t + 10.0)) / 2.0
 
 
 def back_in(t: float) -> float:
@@ -220,6 +254,9 @@ ease_in_out_cubic = cubic_in_out
 ease_in_quint = quint_in
 ease_out_quint = quint_out
 ease_in_out_quint = quint_in_out
+ease_in_expo = expo_in
+ease_out_expo = expo_out
+ease_in_out_expo = expo_in_out
 ease_in_back = back_in
 ease_out_back = back_out
 ease_in_out_back = back_in_out
@@ -237,12 +274,16 @@ _EASING_ITEMS = (
     ("sine_in_out", sine_in_out),
     ("smoothstep", smoothstep),
     ("smootherstep", smootherstep),
+    ("steps", steps),
     ("cubic_in", cubic_in),
     ("cubic_out", cubic_out),
     ("cubic_in_out", cubic_in_out),
     ("quint_in", quint_in),
     ("quint_out", quint_out),
     ("quint_in_out", quint_in_out),
+    ("expo_in", expo_in),
+    ("expo_out", expo_out),
+    ("expo_in_out", expo_in_out),
     ("back_in", back_in),
     ("back_out", back_out),
     ("back_in_out", back_in_out),
@@ -277,29 +318,29 @@ class Preset:
 _PRESET_ITEMS = (
     Preset("linear", "Linear", "constant speed", linear, "y = t", 2),
     Preset(
-        "sine_in_out",
-        "Sine / Cosine",
-        "exact circle projection",
-        sine_in_out,
-        "y = (1 - cos(pi*t)) / 2",
-        9,
-        editable=False,
-    ),
-    Preset(
         "smoothstep",
         "Smoothstep",
-        "zero end velocity",
+        "the essential smooth S-curve",
         smoothstep,
         "y = t^2 * (3 - 2*t)",
         7,
     ),
     Preset(
-        "smootherstep",
-        "Smootherstep",
-        "zero end acceleration too",
-        smootherstep,
-        "y = 6*t^5 - 15*t^4 + 10*t^3",
-        7,
+        "expo_out",
+        "Expo Out",
+        "snap forward / settle",
+        expo_out,
+        "y = 1 - 2^(-10*t), with y(1) = 1",
+        11,
+    ),
+    Preset(
+        "steps",
+        "Steps",
+        "five discrete jumps",
+        steps,
+        "y = floor(5*t) / 5, with y(1) = 1",
+        6,
+        editable=False,
     ),
     Preset(
         "cubic_in_out",
@@ -350,6 +391,8 @@ PRESETS: Mapping[str, Preset] = MappingProxyType({preset.key: preset for preset 
 _ALIASES = {
     "sine": "sine_in_out",
     "sine_cosine": "sine_in_out",
+    "step": "steps",
+    "stepped": "steps",
     "ease_in_sine": "sine_in",
     "ease_out_sine": "sine_out",
     "ease_in_out_sine": "sine_in_out",
@@ -362,6 +405,11 @@ _ALIASES = {
     "ease_in_quint": "quint_in",
     "ease_out_quint": "quint_out",
     "ease_in_out_quint": "quint_in_out",
+    "expo": "expo_in_out",
+    "exponential": "expo_in_out",
+    "ease_in_expo": "expo_in",
+    "ease_out_expo": "expo_out",
+    "ease_in_out_expo": "expo_in_out",
     "back": "back_in_out",
     "ease_in_back": "back_in",
     "ease_out_back": "back_out",
@@ -681,10 +729,12 @@ __all__ = [
     "ease_in_bounce",
     "ease_in_cubic",
     "ease_in_elastic",
+    "ease_in_expo",
     "ease_in_out_back",
     "ease_in_out_bounce",
     "ease_in_out_cubic",
     "ease_in_out_elastic",
+    "ease_in_out_expo",
     "ease_in_out_quint",
     "ease_in_out_sine",
     "ease_in_quint",
@@ -693,12 +743,16 @@ __all__ = [
     "ease_out_bounce",
     "ease_out_cubic",
     "ease_out_elastic",
+    "ease_out_expo",
     "ease_out_quint",
     "ease_out_sine",
     "easing_from_dict",
     "elastic_in",
     "elastic_in_out",
     "elastic_out",
+    "expo_in",
+    "expo_in_out",
+    "expo_out",
     "evaluate",
     "interpolate",
     "linear",
@@ -714,4 +768,5 @@ __all__ = [
     "sine_out",
     "smootherstep",
     "smoothstep",
+    "steps",
 ]
